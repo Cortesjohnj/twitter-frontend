@@ -42,6 +42,9 @@ export default function ButtonAppBar() {
               Twitter
             </Typography>
           </ListItem>
+          <ListItem component={NavLink} to="/signup">
+            <Button className={classes.title}>Sign Up</Button>
+          </ListItem>
           <ListItem component={NavLink} to="/login">
             <Button className={classes.title}>Login</Button>
           </ListItem>
