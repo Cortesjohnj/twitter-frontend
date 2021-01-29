@@ -1,59 +1,57 @@
+import http from './http';
+import { formatDistance } from 'date-fns';
+
 import * as Auth from '../utils/auth';
 
-const BASE_API_URL = process.env.REACT_APP_BASE_API_URL;
+function transformTweet(item) {
+  const { _id, createdAt = '' } = item;
+  const date = formatDistance(new Date(createdAt), new Date());
+
+  return {
+    id: _id,
+    date,
+    ...item,
+  };
+}
+
+function transformTweets(items) {
+  return items.map(transformTweet);
+}
 
 export function getTweets() {
-  return fetch(`${BASE_API_URL}/tweets`)
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      const { success, items = [] } = data;
-      const [item = {}] = items;
-      const { tweets = [] } = item;
-      if (success) {
-        return Promise.resolve(tweets);
-      } else {
-        const { message = '' } = data;
-        return Promise.reject(message);
-      }
-    });
+  return http.get('/tweets').then((response) => {
+    const { data = {} } = response;
+
+    const { items = [] } = data;
+    const [item = {}] = items;
+    const { tweets = [] } = item;
+    const payload = transformTweets(tweets);
+
+    return payload;
+  });
 }
 
 export function getTweet({ id }) {
-  return fetch(`${BASE_API_URL}/tweets/${id}`)
-    .then((response) => response.json())
-    .then((response) => {
-      const { items: [data = {}] = [] } = response;
-      return data;
-    });
+  return http.get(`/tweets/${id}`).then((response) => {
+    const { data = {} } = response;
+
+    const { items: [item = {}] = [] } = data;
+    const payload = transformTweet(item);
+
+    return payload;
+  });
 }
 
 export function newTweet({ content = '' }) {
-  const token = Auth.getToken();
-
-  return fetch(`${BASE_API_URL}/tweets`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'x-access-token': token,
-    },
-    body: JSON.stringify({
+  return http.post(
+    'tweets',
+    {
       content,
-    }),
-  })
-    .then((response) => {
-      return response.json();
-    })
-    .then((data) => {
-      const { success } = data;
-
-      if (success) {
-        return Promise.resolve();
-      } else {
-        const { message = '' } = data;
-
-        return Promise.reject(message);
-      }
-    });
+    },
+    {
+      headers: {
+        'x-access-token': Auth.getToken(),
+      },
+    }
+  );
 }
