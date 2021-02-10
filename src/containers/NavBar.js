@@ -48,7 +48,7 @@ export default function ButtonAppBar() {
               if (user) {
                 return (
                   <>
-                    <ListItem component={NavLink} to="/">
+                    <ListItem component={NavLink} to="/profile">
                       <Button className={classes.title}>{user.name}</Button>
                     </ListItem>
                     <ListItem component={NavLink} to="/signout">

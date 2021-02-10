@@ -13,6 +13,7 @@ const Login = React.lazy(() => import('./pages/Login'));
 const SignUp = React.lazy(() => import('./pages/SignUp'));
 const New = React.lazy(() => import('./pages/New'));
 const SingleTweet = React.lazy(() => import('./pages/SingleTweet'));
+const Profile = React.lazy(() => import('./pages/Profile'));
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
               <Route path={['/login', '/signin']} component={Login} />
               <Route path="/signup" component={SignUp} />
               <Route path="/signout" component={SignOut} />
+              <ProtectedRoute path="/profile" component={Profile} />
               <ProtectedRoute path="/new" component={New} />
               <Route path="/tweets/:id" component={SingleTweet} />
               <Route path="/" component={Home} />

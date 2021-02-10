@@ -8,6 +8,4 @@ const API = {
   ...profile,
 };
 
-window.API = API;
-
 export default API;
