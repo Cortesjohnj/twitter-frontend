@@ -1,15 +1,14 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
 import * as Auth from '../utils/auth';
-import UserContext from '../containers/UserContext';
+import { connect } from 'react-redux';
 
-export default function ProtectedRoute({ path, component: Component }) {
-  const context = useContext(UserContext);
+function ProtectedRoute({ path, component: Component, user }) {
   return (
     <Route
       path={path}
       render={(routeProps) => {
-        if (Auth.isAuthenticaded() && context.user) {
+        if (Auth.isAuthenticaded() && user.username) {
           return <Component {...routeProps} />;
         } else {
           return <Redirect to="/login" />;
@@ -18,3 +17,11 @@ export default function ProtectedRoute({ path, component: Component }) {
     />
   );
 }
+
+const mapStateToProps = (state) => {
+  return {
+    user: state.user,
+  };
+};
+
+export default connect(mapStateToProps)(ProtectedRoute);

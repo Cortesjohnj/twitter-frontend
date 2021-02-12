@@ -1,12 +1,10 @@
-import React, { useEffect, useState, useContext } from 'react';
+import React, { useEffect, useState } from 'react';
 import InfoProfile from '../components/InfoProfile';
 import API from '../api';
-import UserContext from '../containers/UserContext';
+import { connect } from 'react-redux';
 
-export default function Profile() {
+function Profile({ user }) {
   const [userInfo, setUserInfo] = useState(null);
-  const context = useContext(UserContext);
-  const { user = null } = context;
   const { username } = user;
   async function loadProfile({ username }) {
     const data = await API.getProfile(username);
@@ -19,3 +17,11 @@ export default function Profile() {
 
   return <>{userInfo && <InfoProfile {...userInfo} />}</>;
 }
+
+const mapStateToProps = (state) => {
+  return {
+    user: state.user,
+  };
+};
+
+export default connect(mapStateToProps)(Profile);

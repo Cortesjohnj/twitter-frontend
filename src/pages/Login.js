@@ -1,10 +1,10 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import API from '../api';
 import TextField from '@material-ui/core/TextField';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 import { makeStyles } from '@material-ui/core/styles';
-import UserContext from '../containers/UserContext';
+import { connect } from 'react-redux';
 import Alert from '@material-ui/lab/Alert';
 
 const useStyles = makeStyles((theme) => ({
@@ -16,10 +16,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function Login({ history }) {
+function Login({ history, setUser }) {
   const [error, setError] = useState(false);
   const classes = useStyles();
-  const context = useContext(UserContext);
+  // const context = useContext(UserContext);
 
   async function submit(e) {
     e.preventDefault();
@@ -29,7 +29,7 @@ export default function Login({ history }) {
         username: username.value,
         password: password.value,
       });
-      context.setUser({
+      setUser({
         username: username.value,
         ...user,
       });
@@ -61,9 +61,6 @@ export default function Login({ history }) {
           name="username"
           fullWidth
           className={classes.input}
-          inputProps={{
-            'data-testid': 'username',
-          }}
         />
         <TextField
           label="Password:"
@@ -72,14 +69,24 @@ export default function Login({ history }) {
           type="password"
           fullWidth
           className={classes.input}
-          inputProps={{
-            'data-testid': 'password',
-          }}
         />
-        <Button variant="contained" color="primary" type="submit" role="submit">
+        <Button variant="contained" color="primary" type="submit">
           Login
         </Button>
       </form>
     </React.Fragment>
   );
 }
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setUser: (payload) => {
+      dispatch({
+        type: 'SET_USER',
+        payload,
+      });
+    },
+  };
+};
+
+export default connect(undefined, mapDispatchToProps)(Login);
